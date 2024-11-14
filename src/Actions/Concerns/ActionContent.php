@@ -3,6 +3,7 @@
 namespace Rmsramos\Activitylog\Actions\Concerns;
 
 use Carbon\Carbon;
+use Carbon\CarbonImmutable;
 use Closure;
 use Filament\Actions\StaticAction;
 use Filament\Infolists\Components\TextEntry;
@@ -279,30 +280,21 @@ trait ActionContent
         return $value;
     }
 
-    private static function isValidDate(string $dateString, string $dateFormat = 'Y-m-d', string $dateTimeFormat = 'Y-m-d H:i:s'): bool|string
+    private static function isValidDate(string $dateString, string $dateFormat = 'Y-m-d', string $dateTimeFormat = 'Y-m-d H:i:s'): bool
     {
         try {
-
             $dateTime = CarbonImmutable::createFromFormat($dateFormat, $dateString);
 
             if ($dateTime && $dateTime->format($dateFormat) === $dateString) {
                 return true;
             }
 
-        } catch (InvalidFormatException $e) {
-
-        }
-
-        try {
-
             $dateTime = CarbonImmutable::createFromFormat($dateTimeFormat, $dateString);
 
             if ($dateTime && $dateTime->format($dateTimeFormat) === $dateString) {
                 return true;
             }
-
-        } catch (InvalidFormatException $e) {
-
+        } catch (\Throwable $e) {
         }
 
         return false;

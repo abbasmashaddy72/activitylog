@@ -58,13 +58,25 @@ class TimeLinePropertiesEntry extends Entry
         $changes = [];
 
         foreach ($newValues as $key => $newValue) {
-            $oldValue = is_array($oldValues[$key]) ? json_encode($oldValues[$key]) : $oldValues[$key] ?? '-';
-            $newValue = $this->formatNewValue($newValue);
+            $oldValue = isset($oldValues[$key])
+                ? (is_array($oldValues[$key]) ? json_encode($oldValues[$key]) : htmlspecialchars($oldValues[$key]))
+                : '—';
+
+            $formattedNewValue = htmlspecialchars($this->formatNewValue($newValue));
 
             if (isset($oldValues[$key]) && $oldValues[$key] != $newValue) {
-                $changes[] = sprintf(__('activitylog::timeline.properties.compareOldAndNewValues.notEquals'), $key, htmlspecialchars($newValue));
+                $changes[] = sprintf(
+                    __('activitylog::timeline.properties.compareOldAndNewValues.notEquals'),
+                    $key,
+                    $oldValue,
+                    $formattedNewValue
+                );
             } else {
-                $changes[] = sprintf(__('activitylog::timeline.properties.compareOldAndNewValues.equals'), $key, htmlspecialchars($newValue));
+                $changes[] = sprintf(
+                    __('activitylog::timeline.properties.compareOldAndNewValues.equals'),
+                    $key,
+                    $formattedNewValue
+                );
             }
         }
 

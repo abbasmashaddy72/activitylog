@@ -38,7 +38,7 @@ class ActivitylogResource extends Resource
 
     public static function getModel(): string
     {
-        return Activity::class;
+        return config('activitylog.activity_model');
     }
 
     public static function getModelLabel(): string
@@ -182,7 +182,8 @@ class ActivitylogResource extends Resource
             ->label(__('activitylog::tables.columns.log_name.label'))
             ->badge()
             ->formatStateUsing(fn ($state) => ucwords($state))
-            ->sortable();
+            ->sortable()
+            ->searchable();
     }
 
     public static function getEventColumnCompoment(): Column
@@ -198,7 +199,8 @@ class ActivitylogResource extends Resource
                 'deleted' => 'danger',
                 default   => 'primary',
             })
-            ->sortable();
+            ->sortable()
+            ->searchable();
     }
 
     public static function getSubjectTypeColumnCompoment(): Column
@@ -213,6 +215,7 @@ class ActivitylogResource extends Resource
 
                 return Str::of($state)->afterLast('\\')->headline() . ' # ' . $record->subject_id;
             })
+            ->searchable()
             ->hidden(fn (Livewire $livewire) => $livewire instanceof ActivitylogRelationManager);
     }
 
@@ -236,7 +239,8 @@ class ActivitylogResource extends Resource
         return ViewColumn::make('properties')
             ->label(__('activitylog::tables.columns.properties.label'))
             ->view('activitylog::filament.tables.columns.activity-logs-properties')
-            ->toggleable(isToggledHiddenByDefault: true);
+            ->toggleable(isToggledHiddenByDefault: true)
+            ->searchable();
     }
 
     public static function getCreatedAtColumnCompoment(): Column
